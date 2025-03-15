@@ -12,31 +12,31 @@
 
 ## Introduction
 
-In this homework, we explore sequence-to-sequence (seq2seq) modeling for machine translation using a GRU-based encoder-decoder architecture, both **with** and **without** attention. We address the following problems:
+In this homework, we explore sequence-to-sequence (seq2seq) modeling for machine translation using a GRU-based encoder-decoder architecture, both **with** and **without** attention. **Note that all models in this homework are word-based**, in contrast to our previous character-based approaches. We address the following problems:
 
-- **Problem 1**: English \(\to\) French translation (no attention)  
-- **Problem 2**: English \(\to\) French translation (with attention)  
-- **Problem 3**: French \(\to\) English translation (both no attention and with attention)
+- **Problem 1**: English → French translation (no attention)  
+- **Problem 2**: English → French translation (with attention)  
+- **Problem 3**: French → English translation (both no attention and with attention)
 
 We use the provided dataset `Dataset-English_to_French.txt`, which contains parallel sentences in English and French. Our goals are to:
 
-1. Train the models on the entire dataset (no train/validation split needed given the small size).  
+1. Train the models on the entire dataset (no train/validation split is needed given the small size).  
 2. Report training loss, validation loss, and token-level validation accuracy.  
 3. Generate qualitative translations to compare with the reference sentences.
 
-Below, we detail each problem, present training curves, and provide sample translation outputs.
+In addition, based on the complete epoch logs provided, we summarize the epoch at which the best accuracy was reached and compare the performance data across all 100 epochs.
 
 ---
 
-## Problem 1: GRU-based Encoder-Decoder (English \(\to\) French)
+## Problem 1: GRU-based Encoder-Decoder (English → French) - Word-Based
 
 ### 1.1 Implementation
 - **Notebook**: `p1_GRU_etf.ipynb`
 - **Model**: A simple GRU-based seq2seq architecture:
-  - **Encoder**: Embedding layer + GRU, outputs a final hidden state.
-  - **Decoder**: Embedding layer + GRU, predicts one word at a time until EOS token.
-- **Vocabulary**: Built from **both** English and French words in the dataset. We map each word to an index.  
-- **Token-Level Accuracy**: We compute how many predicted tokens match the reference tokens at each position, divided by the total number of target tokens.
+  - **Encoder**: Embedding layer + GRU, outputs the final hidden state.
+  - **Decoder**: Embedding layer + GRU, predicts one word at a time until the EOS token is generated.
+- **Vocabulary**: Constructed from **both** English and French words in the dataset by mapping each word to an index.
+- **Token-Level Accuracy**: Computed as the ratio of correctly predicted words (position-wise) to the total number of target words.
 
 ### 1.2 Training Setup
 - **Hidden Size**: 256  
@@ -49,12 +49,16 @@ Below is the final training vs. validation loss curve and token-level accuracy f
 
 ![Problem 1: GRU (English->French)](images/p1_GRU_etf_output.png)
 
-From the logs:
-- Final **training loss** \(\approx 0.0122\)
-- Final **validation loss** \(\approx 0.0119\)
-- Final **token-level validation accuracy** = 1.0000  
+**Performance Summary:**
+- **Best Accuracy**: Reached at Epoch 41 (Token Accuracy = 1.0000)
+  - Training loss at best epoch: ~0.0408  
+  - Validation loss at best epoch: ~0.0379
+- **Final Epoch (Epoch 100)**:
+  - Training loss: ~0.0122  
+  - Validation loss: ~0.0119  
+  - Token-level validation accuracy: 1.0000
 
-The model converged to near-perfect accuracy on this dataset (which is quite small, so it can be overfit easily).
+The training logs (see `output.txt`) show a steady decrease in loss and that the model converges to near-perfect accuracy on this small dataset.
 
 ### 1.4 Sample Translations
 Some qualitative examples from the notebook:
@@ -83,22 +87,23 @@ Predicted: Nous plantons des fleurs dans le jardin
 --------------------------------------------------
 ```
 
-We observe that the model’s predictions match the target translations exactly for these examples.
+
+The predictions match the target translations exactly.
 
 ---
 
-## Problem 2: GRU-based Encoder-Decoder with Attention (English \(\to\) French)
+## Problem 2: GRU-based Encoder-Decoder with Attention (English → French) - Word-Based
 
 ### 2.1 Implementation
 - **Notebook**: `p2_GRU_attention_etf.ipynb`
-- **Model**: We extend the above GRU-based decoder to incorporate an **Attention** mechanism:
-  - The encoder now stores outputs for each time step.
-  - The decoder computes attention weights over these outputs at each decoding step, forming a context vector.
-  - The context vector is concatenated with the decoder’s current embedding before passing it into the GRU.
-
+- **Model**: An extension of the above GRU-based model with an **Attention** mechanism:
+  - The **Encoder** stores outputs at each time step.
+  - The **Decoder** computes attention weights over these outputs at every decoding step, forming a context vector.
+  - The context vector is concatenated with the current embedding before being input to the GRU.
+  
 ### 2.2 Training Setup
 - **Hidden Size**: 256  
-- **Optimizer**: SGD (lr=0.01)  
+- **Optimizer**: SGD (lr = 0.01)  
 - **Loss**: NLLLoss  
 - **Epochs**: 100  
 
@@ -107,15 +112,19 @@ The following figure shows the training/validation loss and token-level accuracy
 
 ![Problem 2: GRU + Attention (English->French)](images/p2_GRU_attention_etf_output.png)
 
-From the logs:
-- Final **training loss** \(\approx 0.0114\)
-- Final **validation loss** \(\approx 0.0107\)
-- Final **token-level validation accuracy** = 1.0000  
+**Performance Summary:**
+- **Best Accuracy**: Achieved at Epoch 41 (Token Accuracy = 1.0000)
+  - Training loss at best epoch: ~0.0748  
+  - Validation loss at best epoch: ~0.0619
+- **Final Epoch (Epoch 100)**:
+  - Training loss: ~0.0114  
+  - Validation loss: ~0.0107  
+  - Token-level validation accuracy: 1.0000
 
-The model again converges to perfect accuracy on this dataset.
+The attention model also converges to perfect accuracy on this dataset.
 
 ### 2.4 Sample Translations
-Some translations generated by the attention-based model:
+Some sample translations from the attention model:
 
 ``` text
 Sample Translations (Attention Model):
@@ -141,27 +150,31 @@ Predicted: Elle attrape le bus
 --------------------------------------------------
 ```
 
-Comparing with **Problem 1**, both models achieve near-perfect results. The attention mechanism, however, generally helps the model learn alignment between source and target tokens more effectively.
+
+The attention mechanism enhances the alignment between source and target tokens.
 
 ---
 
-## Problem 3: French \(\to\) English Translation
+## Problem 3: French → English Translation - Word-Based
 
-For **Problem 3**, we reverse the direction: from French to English. We repeat both the no-attention (Problem 1) and attention-based (Problem 2) approaches.
+For **Problem 3**, we reverse the translation direction. We implement both the no-attention and the attention-based models.
 
-### 3.1 GRU-based Encoder-Decoder (French \(\to\) English)
+### 3.1 GRU-based Encoder-Decoder (French → English) - No Attention
 - **Notebook**: `p3_GRU_fte.ipynb`
-- **Implementation**: Identical architecture to Problem 1, except we swap the dataset pairs so that the model sees French as input and English as output.
-- **Training Setup**: Same hyperparameters (hidden size=256, lr=0.01, epochs=100).
+- **Implementation**: Identical to Problem 1 except that the dataset pairs are reversed so that the model takes French as input and English as the target.
+- **Training Setup**: Same hyperparameters (hidden size = 256, lr = 0.01, epochs = 100).
 
 #### 3.1.1 Results
 ![Problem 3.1: GRU (French->English)](images/p3_GRU_fte_output.png)
 
-- Final **training loss** \(\approx 0.0122\)
-- Final **validation loss** \(\approx 0.0119\)
-- Final **token-level validation accuracy** = 1.0000  
+**Performance Summary:**
+- **Best Accuracy**: Reached at Epoch 32 (Token Accuracy = 1.0000)
+- **Final Epoch (Epoch 100)**:
+  - Training loss: ~0.0122  
+  - Validation loss: ~0.0119  
+  - Token-level validation accuracy: 1.0000
 
-Sample translations:
+#### 3.1.2 Sample Translations
 
 ``` text
 Sample Translations (French-to-English):
@@ -187,21 +200,22 @@ Predicted (English): We plant flowers in the garden
 --------------------------------------------------
 ```
 
-Again, the model achieves perfect or near-perfect performance on these samples.
-
-### 3.2 GRU-based Encoder-Decoder with Attention (French \(\to\) English)
+### 3.2 GRU-based Encoder-Decoder with Attention (French → English) - Word-Based
 - **Notebook**: `p3_GRU_attention_fte.ipynb`
-- **Implementation**: Same attention-based approach as Problem 2, but with reversed input-output pairs.
-- **Training Setup**: Hidden size=256, lr=0.01, epochs=100.
+- **Implementation**: Same as Problem 2 but with reversed dataset pairs.
+- **Training Setup**: Hidden size = 256, lr = 0.01, epochs = 100.
 
 #### 3.2.1 Results
 ![Problem 3.2: GRU + Attention (French->English)](images/p3_GRU_attention_fte_output.png)
 
-- Final **training loss** \(\approx 0.0114\)
-- Final **validation loss** \(\approx 0.0109\)
-- Final **token-level validation accuracy** = 1.0000  
+**Performance Summary:**
+- **Best Accuracy**: Achieved at Epoch 41 (Token Accuracy = 1.0000)
+- **Final Epoch (Epoch 100)**:
+  - Training loss: ~0.0114  
+  - Validation loss: ~0.0109  
+  - Token-level validation accuracy: 1.0000
 
-Sample translations:
+#### 3.2.2 Sample Translations
 
 ``` text
 Sample Translations (French-to-English, Attention Model):
@@ -227,15 +241,32 @@ Predicted (English): She catches the bus
 --------------------------------------------------
 ```
 
-
-### 3.3 Which Direction is More Effective?
-From these experiments, both **English \(\to\) French** and **French \(\to\) English** models converge to near-perfect token accuracy on this dataset. Given the small size of the corpus, the models easily overfit. In practice, with larger and more diverse data, results may differ. However, for this assignment, the performance is effectively comparable in both directions.
+### 3.3 Analysis
+- Both translation directions (English → French and French → English) converge to near-perfect token accuracy on this small dataset.
+- The best accuracies for the different models were reached at Epoch 41 (for both attention-based models) and Epoch 32 for the GRU without attention in French→English.
+- The comparison of the last 100 epochs shows that the training and validation losses steadily decrease and stabilize while the token-level accuracy reaches 1.0000 in all cases.
+- Overall, both attention and non-attention models achieve similar results on this dataset; however, the attention mechanism provides better alignment and interpretability, which may be more beneficial for larger corpora.
 
 ---
 
-## Summary and Observations
+## Detailed Data Comparison
 
-1. **Data Size**: The dataset is quite small, which allows all four models (with/without attention, Eng\(\to\)Fr or Fr\(\to\)Eng) to reach 100% token accuracy after enough epochs.  
-2. **Attention vs. No Attention**: Attention-based models can align source and target tokens more explicitly. However, on this small dataset, both approaches eventually memorize the mapping.  
-3. **English\(\leftrightarrow\)French**: Both directions achieve similar results in terms of final accuracy and loss curves.  
-4. **Overfitting**: The extremely high accuracy suggests the models have overfit to the small dataset. For larger, more realistic corpora, we would need proper train/validation splits and regularization.
+Based on the complete epoch logs provided in `output.txt`, we summarize the following:
+
+- **Best Epoch (Overall Best Accuracy Achieved):**
+  - **Problem 1 (GRU, Eng→Fr)**: Best at Epoch 41.
+  - **Problem 2 (GRU + Attention, Eng→Fr)**: Best at Epoch 41.
+  - **Problem 3 (GRU, Fr→Eng)**: Best at Epoch 32.
+  - **Problem 3 (GRU + Attention, Fr→Eng)**: Best at Epoch 41.
+
+- **Comparison of Last 100 Epochs:**
+  - In all four experiments, the training and validation losses decreased steadily and stabilized, with token-level accuracy reaching 1.0000 well before the 100th epoch.
+  - The final 100 epochs data confirm that the models have effectively memorized the small dataset.
+
+---
+
+## Conclusion
+
+This homework demonstrates that with a small dataset, both GRU-based encoder-decoder models and their attention-based variants can achieve perfect token-level accuracy. The attention mechanism improves the alignment between source and target sequences, although on this dataset both approaches perform similarly due to the ease of overfitting. Importantly, all models in this assignment are **word-based** rather than character-based, which is a key difference from previous assignments.
+
+For larger datasets, a proper train/validation split and additional regularization methods would be required to prevent overfitting and to achieve robust generalization.
