@@ -1,7 +1,7 @@
 # ECGR-5106 Homework 4
 
 ## Student Information
-**Name:** Yang Xu 
+**Name:** Yang Xu  
 **Student ID:** 801443244  
 **Homework Number:** 4  
 
