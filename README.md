@@ -12,19 +12,19 @@
 
 ## Introduction
 
-In this homework, we explore sequence-to-sequence (seq2seq) modeling for machine translation using a GRU-based encoder-decoder architecture, both **with** and **without** attention. **All models in this homework are word-based**, which is a key difference from our previous character-based approach. We address the following problems:
+In this homework, explore sequence-to-sequence (seq2seq) modeling for machine translation using a GRU-based encoder-decoder architecture, both **with** and **without** attention. **All models in this homework are word-based**, which is a key difference from our previous character-based approach. Address the following problems:
 
 - **Problem 1**: English → French translation (no attention)  
 - **Problem 2**: English → French translation (with attention)  
 - **Problem 3**: French → English translation (both no attention and with attention)
 
-We use the provided dataset `Dataset-English_to_French.txt`, which contains parallel sentences in English and French. Our goals are to:
+Use the provided dataset `Dataset-English_to_French.txt`, which contains parallel sentences in English and French. Our goals are to:
 
 1. Train the models on the entire dataset (no train/validation split is needed given the small size).  
 2. Report training loss, validation loss, and token-level validation accuracy.  
 3. Generate qualitative translations to compare with the reference sentences.
 
-In addition, based on the complete epoch logs provided, we summarize the epoch at which the best accuracy was reached and compare the performance data across all 100 epochs.
+In addition, based on the complete epoch logs provided, summarize the epoch at which the best accuracy was reached and compare the performance data across all 100 epochs.
 
 ---
 
@@ -89,7 +89,7 @@ Predicted: Nous plantons des fleurs dans le jardin
 The predictions match the target translations exactly.
 
 ### 1.5 Comparison and Analysis (Problem 1)
-Before moving to Problem 2, we note that the GRU-based model without attention reached perfect token-level accuracy by Epoch 41. Over the 100 epochs, both training and validation losses decreased steadily, and the model consistently produced correct translations. This indicates that on this small dataset the word-based GRU model can easily memorize the mappings.
+Before moving to Problem 2, the GRU-based model without attention reached perfect token-level accuracy by Epoch 41. Over the 100 epochs, both training and validation losses decreased steadily, and the model consistently produced correct translations. This indicates that on this small dataset the word-based GRU model can easily memorize the mappings.
 
 ---
 
@@ -160,7 +160,7 @@ Comparing Problems 1 and 2:
 
 ## Problem 3: French → English Translation - Word-Based
 
-For **Problem 3**, the translation direction is reversed. We implement both the non-attention and the attention-based models.
+For **Problem 3**, the translation direction is reversed. Implement both the non-attention and the attention-based models.
 
 ### 3.1 GRU-based Encoder-Decoder (French → English) - No Attention
 - **Notebook**: `p3_GRU_fte.ipynb`
