@@ -279,16 +279,16 @@ Predicted (English): She catches the bus
 
 ## Attention Matrix Visualizations
 
-The following figures show the Attention Matrices produced by the GRU-based Attention models. These matrices visualize how much weight the decoder assigns to each source token at each decoding step. In our evaluations, the Attention Matrices are generated during decoding and then saved as images. The heatmaps are now plotted with fixed dimensions and labeled axes for improved readability.
+The following figures show the Attention Matrices produced by the GRU-based Attention models. These matrices visualize how much weight the decoder assigns to each source token at each decoding step. In the evaluations, the Attention Matrices are generated during decoding.
 
-### Attention Visualizations (English → French)
+### Attention Matrix (English → French)
 ![Attention Sample 1](images/p2_attention_eft_sample_1.png)
 ![Attention Sample 2](images/p2_attention_eft_sample_2.png)
 ![Attention Sample 3](images/p2_attention_eft_sample_3.png)
 ![Attention Sample 4](images/p2_attention_eft_sample_4.png)
 ![Attention Sample 5](images/p2_attention_eft_sample_5.png)
 
-### Attention Visualizations (French → English)
+### Attention Matrix (French → English)
 ![Attention Sample 1](images/p3_attention_fte_sample_1.png)
 ![Attention Sample 2](images/p3_attention_fte_sample_2.png)
 ![Attention Sample 3](images/p3_attention_fte_sample_3.png)
@@ -296,7 +296,7 @@ The following figures show the Attention Matrices produced by the GRU-based Atte
 ![Attention Sample 5](images/p3_attention_fte_sample_5.png)
 
 **Analysis of Attention Matrices:**
-- The heatmaps display the attention weights with the source sentence (e.g., English or French) on the x-axis and the generated target sentence on the y-axis.
+- The Attention Matrix heatmaps display the attention weights with the source sentence on the x-axis and the generated target sentence on the y-axis.
 - The lighter regions indicate the higher attention weights, showing which source words are most influential for each target word.
 - These matrices help us verify that the model learns meaningful alignments—for instance, when translating "She catches the bus," the model assigns higher attention weights to the corresponding source words.
 - When the attention maps look similar across different examples, it means the model consistently focuses on the same important parts of the input.
